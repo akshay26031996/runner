@@ -9,10 +9,7 @@ pub enum AppState {
     STARTED,
     RUNNING,
     ERROR,
-<<<<<<< HEAD
-    RESTART
-=======
->>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
+    RESTART,
 }
 
 #[derive(Deserialize, Debug)]
