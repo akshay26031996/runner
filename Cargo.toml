@@ -14,9 +14,13 @@ tokio = { version = "1.33.0", features = [
     "macros",
     "sync",
     "time",
+<<<<<<< HEAD
     "tracing",
 ] }
 console-subscriber = "0.2.0"
+=======
+] }
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
 tokio-util = "0.7.9"
 dashmap = "5.5.3"
 anyhow = "1"

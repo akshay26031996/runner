@@ -14,6 +14,7 @@ use tokio::{
     time::{self, Duration},
 };
 
+<<<<<<< HEAD
 use crate::{
     command,
     config::{AppState, Process, State, StepConfig},
@@ -35,6 +36,19 @@ async fn genereate_ui_events(tx: Sender<UiEvent>) {
     let enter_event = Event::Key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
     let mut input = String::new();
     let mut is_input_mode = false;
+=======
+use crate::config::{AppState, Process, State, StepConfig};
+
+pub enum UiEvent {
+    Tick,
+    Cancelled,
+}
+
+pub async fn genereate_ui_events(tx: Sender<UiEvent>) {
+    let mut interval = time::interval(Duration::from_millis(200));
+    let mut reader = EventStream::new();
+    let ctrl_c = KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL);
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
     loop {
         let delay = interval.tick().fuse();
         let event = reader.next().fuse();
@@ -44,6 +58,7 @@ async fn genereate_ui_events(tx: Sender<UiEvent>) {
             },
             maybe_event = event => {
                 match maybe_event {
+<<<<<<< HEAD
                     Some(Ok(e)) => {
                         if is_input_mode {
                             if let Event::Key(KeyEvent { code, .. }) = e {
@@ -77,6 +92,10 @@ async fn genereate_ui_events(tx: Sender<UiEvent>) {
                             is_input_mode = false;
                         }
                         else if e == quit_event || e == ctrl_c_event {
+=======
+                    Some(Ok(event)) => {
+                        if event == Event::Key(KeyCode::Char('q').into()) || event == Event::Key(ctrl_c) {
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
                             tx.send(UiEvent::Cancelled).await.expect("Can send events");
                             break;
                         }
@@ -92,7 +111,11 @@ async fn genereate_ui_events(tx: Sender<UiEvent>) {
     }
 }
 
+<<<<<<< HEAD
 async fn render_state<W>(
+=======
+pub async fn render_state<W>(
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
     process: Arc<Process>,
     state: Arc<State>,
     rx: &mut Receiver<UiEvent>,
@@ -101,6 +124,7 @@ async fn render_state<W>(
 where
     W: std::io::Write,
 {
+<<<<<<< HEAD
     let mut input = String::new();
 
     let mut max_length = 0;
@@ -238,6 +262,40 @@ pub async fn render(process: Arc<Process>, state: Arc<State>) -> anyhow::Result<
 
     execute!(
         stdout,
+=======
+    execute!(w, terminal::EnterAlternateScreen, cursor::SavePosition,)?;
+    terminal::enable_raw_mode().expect("Can run in raw mode");
+    loop {
+        match rx.recv().await.expect("Can read events") {
+            UiEvent::Tick => {
+                queue!(
+                    w,
+                    terminal::Clear(terminal::ClearType::All),
+                    cursor::RestorePosition,
+                    cursor::MoveToNextLine(1)
+                )?;
+                for step in &process.steps {
+                    match step {
+                        StepConfig::Serial(s) => {
+                            render_app(&s.app, state.get(&s.app).unwrap().value(), w)?;
+                        }
+                        StepConfig::Parallel(ps) => {
+                            for p in ps {
+                                render_app(&p.app, state.get(&p.app).unwrap().value(), w)?;
+                            }
+                        }
+                    };
+                }
+                w.flush()?;
+            }
+            UiEvent::Cancelled => {
+                break;
+            }
+        };
+    }
+    execute!(
+        w,
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
         style::ResetColor,
         cursor::Show,
         terminal::LeaveAlternateScreen
@@ -245,3 +303,47 @@ pub async fn render(process: Arc<Process>, state: Arc<State>) -> anyhow::Result<
     terminal::disable_raw_mode().expect("Can run in raw mode");
     Ok(())
 }
+<<<<<<< HEAD
+=======
+
+fn render_app<W>(app: &String, app_state: &AppState, w: &mut W) -> anyhow::Result<()>
+where
+    W: std::io::Write,
+{
+    match app_state {
+        AppState::PENDING => queue!(
+            w,
+            style::Print(app),
+            style::Print("\t\t█ "),
+            style::PrintStyledContent("🕓".bold()),
+            style::Print(" █"),
+            cursor::MoveToNextLine(1)
+        )?,
+        AppState::STARTED => queue!(
+            w,
+            style::Print(app),
+            style::Print("\t\t█ "),
+            style::PrintStyledContent("🟡".bold()),
+            style::Print(" █"),
+            cursor::MoveToNextLine(1),
+        )?,
+        AppState::RUNNING => queue!(
+            w,
+            style::Print(app),
+            style::Print("\t\t█ "),
+            style::PrintStyledContent("✅".bold()),
+            style::Print(" █"),
+            cursor::MoveToNextLine(1),
+        )?,
+        AppState::ERROR => queue!(
+            w,
+            style::Print(app),
+            style::Print("\t\t█ "),
+            style::PrintStyledContent("❌".bold()),
+            style::Print(" █"),
+            cursor::MoveToNextLine(1),
+        )?,
+    };
+    Ok(())
+}
+>>>>>>> ca159e0622c5550a49851e7f40a21a46406afaaa
