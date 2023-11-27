@@ -1,0 +1,41 @@
+{
+  "steps": [
+    {
+      "app": "Service 1",
+      "start_command": "PORT=8081 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+      "health_check_url": "http://localhost:8081/actuator/health"
+    },
+    {
+      "app": "Service 2",
+      "start_command": "PORT=8082 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+      "health_check_url": "http://localhost:8082/actuator/health"
+    },
+    {
+      "app": "Service 3",
+      "start_command": "PORT=8083 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+      "health_check_url": "http://localhost:8083/actuator/health"
+    },
+    [
+      {
+        "app": "Service A1",
+        "start_command": "PORT=8084 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+        "health_check_url": "http://localhost:8084/actuator/health"
+      },
+      {
+        "app": "Service A2",
+        "start_command": "PORT=8085 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+        "health_check_url": "http://localhost:8085/actuator/health"
+      },
+      {
+        "app": "Service A3",
+        "start_command": "PORT=8086 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+        "health_check_url": "http://localhost:8086/actuator/health"
+      }
+    ],
+    {
+      "app": "Service 5",
+      "start_command": "PORT=8087 java -jar ~/Downloads/ping/build/libs/ping-0.0.1-SNAPSHOT.jar &",
+      "health_check_url": "http://localhost:8087/actuator/health"
+    }
+  ]
+}
